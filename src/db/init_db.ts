@@ -19,3 +19,6 @@ const app = FirebaseAdmin.initializeApp({
 });
 
 export default app.firestore();
+export const ArrayUpdate = FirebaseAdmin.firestore.FieldValue.arrayUnion;
+export const ArrayRemove = FirebaseAdmin.firestore.FieldValue.arrayRemove;
+

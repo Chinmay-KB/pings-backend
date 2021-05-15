@@ -1,4 +1,4 @@
-import db from './init_db';
+import db from '../init_db';
 
 const docRef = db.collection('users');
 const getData = async (): Promise<string> => {

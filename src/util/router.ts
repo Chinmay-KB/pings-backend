@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import getData from '../db/get_data';
-import userLogin from '../db/user_login';
-import checkExist from '../db/check_exists';
+import getData from '../db/operations/get_data';
+import userLogin from '../db/operations/user_login';
+import createAlarm from '../db/operations/create_alarm';
 
 const router = Router();
 
@@ -17,9 +17,11 @@ router.get('/data', async (_req, res) => {
 
 router.post('/login', async (req, res) => res.send(await userLogin(req)));
 
-router.get('/check', async (req, res) => {
-  const body = req.body;
-  return res.send(await checkExist(body['doc'], body['collection']));
-});
+router.post('/createAlarm',async (req, res)=>res.send(await createAlarm(req)));
+
+// router.get('/check', async (req, res) => {
+//   const body = req.body;
+//   return res.send(await checkExist(body['doc'], body['collection']));
+// });
 
 export default router;
