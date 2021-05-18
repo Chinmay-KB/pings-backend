@@ -5,9 +5,7 @@ import router from './util/router';
 
 const app = express();
 
-app.use(cors());
-app.use(auth);
-app.use(express.urlencoded({ extended: false }));
+app.use(cors(), auth, express.urlencoded({ extended: false }));
 
 app.use('/', router);
 
