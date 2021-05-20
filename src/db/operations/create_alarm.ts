@@ -11,7 +11,7 @@ import db from '../init_db';
  */
 const createAlarm = async (res: Request) => {
   const data = toClass(res.body, AlarmModel);
-  const key = 'gj3828qijwdsdd';
+  const key = 'gj3828qijwdsdd' + Math.random();
   const doc = db.collection('alarms').doc(key);
   console.log(res.body);
   await doc.set({
