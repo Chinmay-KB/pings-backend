@@ -1,7 +1,9 @@
 import { Request } from 'express';
 import { toClass } from 'class-converter';
 import { AlarmModel } from '../schema/alarm';
-import { addUserAlarm } from './user_alarm';
+import { addUserAlarm, acceptInvite } from './user_alarm';
+import { getTrusted } from './trusted_alarms';
+import * as crypto from 'crypto';
 import db from '../init_db';
 
 /**
@@ -11,19 +13,24 @@ import db from '../init_db';
  */
 const createAlarm = async (res: Request) => {
   const data = toClass(res.body, AlarmModel);
-  const key = 'gj3828qijwdsdd' + Math.random();
+  const key = crypto.randomBytes(21).toString('base64').slice(0, 21);
   const doc = db.collection('alarms').doc(key);
   console.log(res.body);
+  const trustedContacts = await getTrusted(data.creator);
   await doc.set({
     time: data.time,
     title: data.title,
     users: data.users,
     alarm_tone: data.alarm_tone,
     creator: data.creator,
-    trusted: data.trusted,
+    trusted: trustedContacts,
+    alarm_accepted: [],
+    alarm_rejected: [],
+    invite_accepted: trustedContacts,
+    invite_rejected: [],
   });
   return JSON.stringify({
-    success: await addUserAlarm(data.users, data.trusted, data.creator, key),
+    success: await addUserAlarm(data.users, trustedContacts, data.creator, key),
   });
 };
 

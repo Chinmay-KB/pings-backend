@@ -36,6 +36,9 @@ const addUser = async (user: UserModel): Promise<boolean> => {
       ongoing: user.ongoing,
       completed: user.completed,
       pending: user.pending,
+      trusted_by:user.trusted_by,
+      trusting:user.trusting, 
+      name:user.name
     })
     .then(
       () => true,
@@ -55,6 +58,7 @@ const updateUser = async (user: UserModel): Promise<boolean> => {
   return docRef
     .update({
       fcm_token: user.fcm_token,
+      name:user.name
     })
     .then(
       () => true,

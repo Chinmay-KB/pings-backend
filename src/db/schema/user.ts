@@ -6,17 +6,25 @@ export class UserModel {
   uid!: string;
 
   @property()
+  name!: string;
+
+  @property()
   fcm_token!: string;
 
   @defaultVal([])
-  @property('ongoing', AlarmModel, true)
-  ongoing!: AlarmModel[];
+  ongoing!: string[];
 
   @defaultVal([])
-  @property('completed', AlarmModel, true)
-  completed!: AlarmModel[];
+  completed!: string[];
 
   @defaultVal([])
-  @property('pending', AlarmModel, true)
-  pending!: AlarmModel[];
+  pending!: string[];
+
+  @defaultVal([])
+  @property()
+  trusting!: string[];
+
+  @defaultVal([])
+  @property()
+  trusted_by!: string[];
 }

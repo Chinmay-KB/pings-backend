@@ -19,4 +19,12 @@ export class AlarmModel {
   @defaultVal([])
   @property()
   trusted!: string[];
+
+  @defaultVal([])
+  @property()
+  alarm_accepted!: string[];
+
+  @defaultVal([])
+  @property()
+  alarm_rejected!: string[];
 }

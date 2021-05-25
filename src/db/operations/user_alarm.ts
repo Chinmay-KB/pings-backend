@@ -18,6 +18,7 @@ const addUserAlarm = async (
   key: string,
 ): Promise<boolean> => {
   const batch = db.batch();
+  users = users.filter((el) => !trusted.includes(el));
   users.forEach((uid: string) => {
     const userRef = db.collection('users').doc(uid);
     batch.update(userRef, {
@@ -35,9 +36,7 @@ const addUserAlarm = async (
     });
   });
   return batch.commit().then(
-    () => {
-      return true;
-    },
+    () => true,
     (_error) => false,
   );
 };
@@ -75,7 +74,6 @@ const removeUserAlarm = async (
  */
 
 const getUserAlarm = async (uid: string): Promise<string> => {
-  const data = {};
   const userDoc = await db.collection('users').doc(uid).get();
   let pendingDocRefs: firestore.DocumentReference[] = [];
   let ongoingDocRefs: firestore.DocumentReference[] = [];
@@ -101,4 +99,59 @@ const getUserAlarm = async (uid: string): Promise<string> => {
   });
 };
 
-export { addUserAlarm, removeUserAlarm, getUserAlarm };
+const rejectInvite = async (uid: string, key: string) => {
+  const batch = db.batch();
+  const alarmRef = db.collection('alarms').doc(key);
+  const userRef = db.collection('users').doc(uid);
+  batch.update(alarmRef, {
+    invite_rejected: ArrayUpdate(uid),
+  });
+  batch.update(userRef, {
+    pending: ArrayRemove(key),
+  });
+  return batch.commit().then(
+    () =>
+      JSON.stringify({
+        success: true,
+        message: 'Invite rejected',
+      }),
+    (_err) =>
+      JSON.stringify({
+        success: false,
+        message: 'Error',
+      }),
+  );
+};
+
+const acceptInvite = async (uid: string, key: string) => {
+  const batch = db.batch();
+  const alarmRef = db.collection('alarms').doc(key);
+  const userRef = db.collection('users').doc(uid);
+  batch.update(alarmRef, {
+    invite_accepted: ArrayUpdate(uid),
+  });
+  batch.update(userRef, {
+    pending: ArrayRemove(key),
+    ongoing: ArrayUpdate(key),
+  });
+  return batch.commit().then(
+    () =>
+      JSON.stringify({
+        success: true,
+        message: 'Invite accepted',
+      }),
+    (_err) =>
+      JSON.stringify({
+        success: false,
+        message: 'Error',
+      }),
+  );
+};
+
+export {
+  addUserAlarm,
+  removeUserAlarm,
+  getUserAlarm,
+  acceptInvite,
+  rejectInvite,
+};
